@@ -1,0 +1,20 @@
+#!/bin/bash
+
+exec < /dev/tty
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+if [[ "$(docker images -q "test" 2> /dev/null)" == "" ]];then
+  read -p "[pre-commit hook] Test images does not exist... do you wish to build this image? (y/n) " yn
+  case $yn in 
+    [Yy] ) docker compose --profile=test build;;
+    * ) exit 1;;
+  esac
+fi
+
+docker compose run -T --rm test
+exit_status=$?
+docker compose --profile=test down --volumes
+if [ "$exit_status" -ne 0 ]; then
+  echo "Make test or check did not pass please resolve issues and try again."
+  exit 1
+fi
