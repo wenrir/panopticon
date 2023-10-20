@@ -14,7 +14,6 @@ jobs:
         uses: actions/labeler@v4.3.0
         with:
           dot: false
-          configuration-path: ".github/util/config/actions-labeler.yml"
       - name: Label size
         if: "!contains(github.event.pull_request.labels.*.name, 'size/*')"
         uses: codelytv/pr-size-labeler@v1
