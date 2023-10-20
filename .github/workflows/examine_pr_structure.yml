@@ -1,0 +1,73 @@
+name: Examine structure of PR.
+
+on:
+  pull_request:
+    types: [opened, synchronized, reopened, edited]
+    branches:
+      - main
+jobs:
+  examine:
+    name: Examine
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add labels
+        uses: actions/labeler@v4.3.0
+        with:
+          dot: false
+          configuration-path: ".github/util/config/actions-labeler.yml"
+      - name: Label size
+        if: "!contains(github.event.pull_request.labels.*.name, 'size/*')"
+        uses: codelytv/pr-size-labeler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          xs_label: "size/xs"
+          xs_max_size: "10"
+          s_label: "size/s"
+          s_max_size: "100"
+          m_label: "size/m"
+          m_max_size: "300"
+          l_label: "size/l"
+          l_max_size: "500"
+          xl_label: "size/xl"
+          fail_if_xl: "true"
+          message_if_xl: >
+            Rejected as PR exceeds 500 lines! (if intended please contact maintainer)
+          files_to_ignore: |
+            - "*.md"
+            - "docs/*"
+      - name: Add maintainer as reviewer
+        if: github.event.action == 'opened'
+        uses: actions/github-script@v6.4.1
+        with:
+          script: |
+            let payload = {
+              owner: context.issue.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            }
+            const pull = await github.rest.pulls.get(payload);
+
+            let reviewers = [];
+            if (pull["requested_reviewers"]) {
+              pull["requested_reviewers"].forEach(e => { reviewers.push(e["login"]); });
+            }
+            reviewers.push("wenrir")
+            reviewers = reviewers.filter((value, index, array) => array.indexOf(value) === index && value != context.actor);
+            payload["reviewers"] = reviewers;
+            await github.rest.pulls.requestReviewers(payload);
+      - name: Auto assignee
+        if: >-
+          join(github.event.pull_request.assignees) == '' &&
+          github.event.pull_request.assignee == null &&
+          github.event.action == 'opened'
+        uses: actions/github-script@v6.4.1
+        with:
+          script: |
+            let payload = {
+              owner: context.issue.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            }
+            const pull = await github.rest.issues.get(payload);
+            payload["assignees"] = context.actor;
+            await github.rest.issues.addAssignees(payload);
