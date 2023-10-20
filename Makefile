@@ -11,7 +11,7 @@ setup:
 .PHONY: start
 ## Start docker services
 start:
-	@docker compose up --detach
+	@docker compose --file $(ROOT_PATH)/docker-compose.yml up --detach
 
 .PHONY: stop
 ## Stop docker services
@@ -40,10 +40,9 @@ g-update-all: update
 	git submodule foreach git pull origin master
 	git submodule foreach git checkout master
 
-
 .PHONY: test_sample
 ## Run test for sample module
-sample_test:
+test_sample:
 	@docker compose --file $(ROOT_PATH)/docker-compose.test.yml run --rm --quiet-pull test-sample; \
 	docker compose --file $(ROOT_PATH)/docker-compose.test.yml down --rmi all --volumes --remove-orphans
 

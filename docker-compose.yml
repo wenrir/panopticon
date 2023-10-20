@@ -6,20 +6,20 @@ x-healthcheck: &healthcheck
     - sh
     - -c
     - util/healthcheck.ros
-  interval: 20s
-  timeout: 10s
-  retries: 2
+  interval: 30s
+  timeout: 20s
+  retries: 1
 
 x-module-info: &module_info
-  image: ${MODULE_NAME:-module}
-  container_name: ${MODULE_NAME:-module}
+  image: ${MODULE_NAME:-module}-${TARGET:-target}
+  container_name: ${MODULE_NAME:-module}-${TARGET:-target}
 
 x-build: &build
   context: ./modules/${MODULE_NAME:-module}
   dockerfile: ${DOCKERFILE:-../../misc/modules/Dockerfile}
-  target: base
+  target: ${TARGET:-base}
   args:
-    - OPTIONAL_DEPS=${OPTIONAL_DEPS-[dev]}
+    - ADDITIONAL_APK=${ADDITIONAL_APK:-}
     - MODULE_NAME=${MODULE_NAME:-module}
 
 x-module-environment: &module_environment
@@ -36,20 +36,23 @@ services:
       <<: *build
 
   sample:
-    image: sample
+    image: sample-target
     container_name: sample
-    command: "sample"
+    command: -h
     healthcheck:
       <<: *healthcheck
     environment:
       <<: *module_environment
       POSTGRES_PASSWORD: ${POSTGRES_SAMPLE_PASSWORD:-sample}
       POSTGRES_HOST: sample-db
+      MODULE_DIR: sample
     depends_on:
       - sample-db
+    #volumes:
+      #- ./modules/sample:/sample
 
   sample-db:
-    image: postgres:15.4
+    image: postgres:alpine3.18
     container_name: sample-db
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-sample}

@@ -5,14 +5,58 @@ exec ros -Q -- $0 "$@"
 |#
 (progn ;;init forms
   (ros:ensure-asdf)
-  ;;#+quicklisp(ql:quickload '() :silent t)
-  )
+  #+quicklisp(ql:quickload '(unix-opts cl-info) :silent t))
 
-(defpackage :ros.script.entrypoint.3906760669
+
+(defpackage :ros.script.entrypoint.3906772190
   (:use :cl))
-(in-package :ros.script.entrypoint.3906760669)
+(in-package :ros.script.entrypoint.3906772190)
+
+(defun opts-error(c)
+  "handle unix-opts error."
+  (format t "OPTS error: ~a~&" (opts:option c)))
 
 (defun main (&rest argv)
-  (declare (ignorable argv))
-  (print argv))
+  "Parse basic CLI args to the entrypoint."
+  (opts:define-opts
+    (:name :help
+     :description "Help."
+     :short #\h
+     :long "help")
+
+    (:name :test
+     :description "Run test suite for module."
+     :short #\t
+     :long "test")
+
+    (:name :run
+     :description "Run module."
+     :short #\t
+     :long "run")
+
+    (:name :version
+     :description "Version information."
+     :short #\v
+     :long "version"))
+
+
+  (multiple-value-bind (options free-args)
+      (handler-bind ((error #'opts-error))
+        (opts:get-opts))
+
+    (when (getf options :version)
+      (format t "~& ~a ~&" (cl-info:get-cl-info))
+      (uiop:quit))
+
+    (when (getf options :test)
+      ;; Call sample:test (argv)
+      (uiop:quit))
+
+    (when (getf options :run)
+      ;; Call sample:run (argv)
+      (uiop:quit))
+
+    (when (getf options :help)
+      (opts:describe)
+      (uiop:quit))))
 ;;; vim: set ft=lisp lisp:
