@@ -1,0 +1,19 @@
+module:
+  - modules/*
+enhancement:
+  - modules/*/src/*
+test:
+  - modules/*/test/*
+docs:
+  - "*.md"
+  - "*.org"
+  - docs/**
+services:
+  - nginx/**
+image:
+  - any: ["docker-compose.yml", "docker-compose.test.yml", "**/Dockerfile"]
+actions:
+  - .github/**
+misc:
+  - .githooks/**
+  - misc/**
