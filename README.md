@@ -1,5 +1,5 @@
 # web-panopticon
-Basic structure for web application.
+Basic application structure.
 
 ## Development 
 
