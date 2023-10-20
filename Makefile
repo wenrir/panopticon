@@ -1,4 +1,4 @@
-ROOT_PATH := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+PROJECT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 SHELL := /bin/sh
 .DEFAULT_GOAL := help
 
@@ -11,7 +11,7 @@ setup:
 .PHONY: start
 ## Start docker services
 start:
-	@docker compose --file $(ROOT_PATH)/docker-compose.yml up --detach
+	@docker compose --file $(PROJECT_DIR)/docker-compose.yml up --detach
 
 .PHONY: stop
 ## Stop docker services
@@ -21,12 +21,12 @@ stop:
 .PHONY: build
 ## Build all docker images
 dbuild:
-	@docker compose --file $(ROOT_PATH)/docker-compose.yml build
+	@docker compose --file $(PROJECT_DIR)/docker-compose.yml build
 
 .PHONY: clean
 ## Clean images
 dclean:
-	@docker compose --file $(ROOT_PATH)/docker-compose.yml images -q | xargs -r docker rmi
+	@docker compose --file $(PROJECT_DIR)/docker-compose.yml images -q | xargs -r docker rmi
 
 .PHONY: g-update
 ## Pull origin master and update submodules
@@ -43,8 +43,8 @@ g-update-all: update
 .PHONY: test_sample
 ## Run test for sample module
 test_sample:
-	@docker compose --file $(ROOT_PATH)/docker-compose.test.yml run --rm --quiet-pull test-sample; \
-	docker compose --file $(ROOT_PATH)/docker-compose.test.yml down --rmi all --volumes --remove-orphans
+	@docker compose --file $(PROJECT_DIR)/docker-compose.test.yml run --rm --quiet-pull test-sample; \
+	docker compose --file $(PROJECT_DIR)/docker-compose.test.yml down --rmi all --volumes --remove-orphans
 
 .PHONY: test
 ## Run tests for all modules
@@ -53,7 +53,7 @@ test: test_sample
 .PHONY: build_sample
 ## Builds sample module
 build_sample:
-	@MODULE_NAME=sample docker compose --file $(ROOT_PATH)/docker-compose.yml build module
+	@MODULE_NAME=sample docker compose --file $(PROJECT_DIR)/docker-compose.yml build module
 
 .PHONY: build
 ## Builds all modules
