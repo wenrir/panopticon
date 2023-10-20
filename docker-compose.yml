@@ -1,24 +1,56 @@
 version: "3"
 
-services: 
-  dragonfly:
-    image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
-    ulimits:
-      memlock: -1
-    networks:
-      - shared
-    ports:
-      - "6379:6379"
-    # For better performance, consider `host` mode instead `port` to avoid docker NAT.
-    # `host` mode is NOT currently supported in Swarm Mode.
-    # https://docs.docker.com/compose/compose-file/compose-file-v3/#network_mode
-    # network_mode: "host"
-    volumes:
-      - dragonflydata:/data
+x-healthcheck: &healthcheck
+  test:
+    - "CMD"
+    - sh
+    - -c
+    - util/healthcheck.ros
+  interval: 20s
+  timeout: 10s
+  retries: 2
 
-volumes:
-  dragonflydata:
+x-module-info: &module_info
+  image: ${MODULE_NAME:-module}
+  container_name: ${MODULE_NAME:-module}
 
-networks:
-  shared:
-    name: shared
+x-build: &build
+  context: ./modules/${MODULE_NAME:-module}
+  dockerfile: ${DOCKERFILE:-../../misc/modules/Dockerfile}
+  target: base
+  args:
+    - OPTIONAL_DEPS=${OPTIONAL_DEPS-[dev]}
+    - MODULE_NAME=${MODULE_NAME:-module}
+
+x-module-environment: &module_environment
+  POSTGRES_DBNAME: ${POSTGRES_DBNAME:-db_name}
+  POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+  POSTGRES_USER: ${POSTGRES_USER:-user}
+  PERSISTENCE_MODULE: eventsourcing.postgres
+
+services:
+  module:
+    profiles: ["module_builder"]
+    <<: *module_info
+    build:
+      <<: *build
+
+  sample:
+    image: sample
+    container_name: sample
+    command: "sample"
+    healthcheck:
+      <<: *healthcheck
+    environment:
+      <<: *module_environment
+      POSTGRES_PASSWORD: ${POSTGRES_SAMPLE_PASSWORD:-sample}
+      POSTGRES_HOST: sample-db
+    depends_on:
+      - sample-db
+
+  sample-db:
+    image: postgres:15.4
+    container_name: sample-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sample}
+      POSTGRES_PASSWORD: ${POSTGRES_USER_PASSWORD:-sample}

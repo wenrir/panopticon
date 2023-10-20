@@ -1,0 +1,22 @@
+version: "3.4"
+
+x-test-info: &test_info
+  command: ["/bin/sh", "-c", "util/wait-db.sh; make test"]
+  depends_on:
+    - test-db
+  environment:
+    POSTGRES_DBNAME: test
+    POSTGRES_HOST: test-db
+    POSTGRES_PORT: 5432
+    POSTGRES_USER: test
+    POSTGRES_PASSWORD: test
+
+services:
+  test-sample:
+    image: sample
+    <<: *test_info
+  test-db:
+    image: postgres:15.4
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test

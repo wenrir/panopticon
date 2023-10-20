@@ -1,5 +1,5 @@
 ROOT_PATH := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-SHELL := /bin/bash
+SHELL := /bin/sh
 .DEFAULT_GOAL := help
 
 .PHONY: setup
@@ -10,22 +10,22 @@ setup:
 
 .PHONY: start
 ## Start docker services
-start: 
+start:
 	@docker compose up --detach
 
-.PHONY: stop 
+.PHONY: stop
 ## Stop docker services
-stop: 
+stop:
 	@docker compose down --rmi all --volumes --remove-orphans
 
 .PHONY: build
-## Build docker services
-build:
+## Build all docker images
+dbuild:
 	@docker compose --file $(ROOT_PATH)/docker-compose.yml build
 
 .PHONY: clean
-## Clean docker images
-clean: 
+## Clean images
+dclean:
 	@docker compose --file $(ROOT_PATH)/docker-compose.yml images -q | xargs -r docker rmi
 
 .PHONY: g-update
@@ -39,6 +39,26 @@ g-update:
 g-update-all: update
 	git submodule foreach git pull origin master
 	git submodule foreach git checkout master
+
+
+.PHONY: test_sample
+## Run test for sample module
+sample_test:
+	@docker compose --file $(ROOT_PATH)/docker-compose.test.yml run --rm --quiet-pull test-sample; \
+	docker compose --file $(ROOT_PATH)/docker-compose.test.yml down --rmi all --volumes --remove-orphans
+
+.PHONY: test
+## Run tests for all modules
+test: test_sample
+
+.PHONY: build_sample
+## Builds sample module
+build_sample:
+	@MODULE_NAME=sample docker compose --file $(ROOT_PATH)/docker-compose.yml build module
+
+.PHONY: build
+## Builds all modules
+build: build_sample
 
 .PHONY: help
 help:
