@@ -5,7 +5,7 @@ x-healthcheck: &healthcheck
     - "CMD"
     - sh
     - -c
-    - util/healthcheck.ros
+    - misc/pulse
   interval: 30s
   timeout: 20s
   retries: 1

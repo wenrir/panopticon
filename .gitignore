@@ -6,4 +6,5 @@ tmp/
 
 *.env
 modules/*/entrypoint
+modules/*/misc/pulse
 memo.org
