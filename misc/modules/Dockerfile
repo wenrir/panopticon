@@ -8,7 +8,7 @@ WORKDIR /${MODULE_DIR}
 
 #FIXME Most be a nicer way to mount, build and execute entrypoint.
 RUN --mount=type=bind,source=entrypoint.ros,target=entrypoint.ros \
-    --mount=type=bind,source=util/pulse.ros,target=util/pulse.ros \
+    --mount=type=bind,source=misc/pulse.ros,target=misc/pulse.ros \
     apk update && apk add --no-cache\
     make=4.4.1-r1 rlwrap=0.46.1-r0 ${ADDITIONAL_APK}\
     --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing roswell \
@@ -16,7 +16,7 @@ RUN --mount=type=bind,source=entrypoint.ros,target=entrypoint.ros \
     && ros install ${ROSIMPL} \
     && ros use ${ROSIMPL} \
     && ros build entrypoint.ros \
-    && ros build util/pulse.ros \
+    && ros build misc/pulse.ros \
     && echo "cd /${MODULE_DIR} && ./entrypoint \$@" > /start_module.sh\
     && chmod u+x /start_module.sh
 
