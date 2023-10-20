@@ -1,9 +1,9 @@
 #!/bin/bash
-msg=$(head -n 1 "$1")  # Only check that the first line of commit-msg is wellformed.
+msg=$(head -n 1 "$1")
 is_merge_commit=$(git rev-parse -q --verify MERGE_HEAD)
 if [ -z "$is_merge_commit" ]; then
     msg_length=${#msg}
-    max_length=72  # Mr. Torvalds https://github.com/torvalds/linux/pull/17#issuecomment-5661185
+    max_length=72
     if ((msg_length > max_length)); then
         echo "[ERROR!] commit-msg: Commit message cannot exceed $max_length."
         exit 1
