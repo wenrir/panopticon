@@ -3,6 +3,8 @@ Basic structure for web application.
 
 ## Development 
 
+`make help` for more information.
+
 ### Use githooks
 
 `make setup`
@@ -11,9 +13,17 @@ Basic structure for web application.
 
 `make build`
 
-### How to run
+#### Single module
 
-`make run`
+`make build_modulename`
+
+### How to start modules
+
+`make start`
+
+#### Single module
+
+`make start_modulename`
 
 ### How to test
 
