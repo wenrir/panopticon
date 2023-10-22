@@ -7,12 +7,6 @@
 
 Basic application structure.
 
-## Idea [wip]
-
-Idea of the project is to provide a reusable template for creating web applications using orpc.
-
-![idea](https://github.com/wenrir/web-panopticon/blob/main/misc/Concept.png)
-
 ## Development 
 
 `make help` for more information.
@@ -40,6 +34,13 @@ Idea of the project is to provide a reusable template for creating web applicati
 ### How to test
 
 `make test`
+
+
+## Idea [wip]
+
+Idea of the project is to provide a reusable template for creating web applications using orpc.
+
+![idea](https://github.com/wenrir/web-panopticon/blob/main/misc/Concept.png)
 
 
 # License
