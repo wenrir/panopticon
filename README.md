@@ -35,3 +35,7 @@ Idea of the project is to provide a reusable template for creating web applicati
 
 `make test`
 
+
+# License
+
+See the [LICENSE](https://github.com/wenrir/web-panopticon/blob/main/LICENSE) file for license rights and limitations (BSD-3).
