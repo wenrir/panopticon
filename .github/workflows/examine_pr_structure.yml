@@ -25,7 +25,7 @@ jobs:
 
             if (!gh_title) {
               const title = "No Github issue found in PR title!";
-              const repo = pr.data.head.repo.name.toLowerCase();
+              const repo = pull.data.head.repo.name.toLowerCase();
               const body = "**" + title + "**&nbsp;&nbsp;"
                 + "Could not find github issue linked to this PR."
                 + "Please refer to [development guidelines](https://github.com/wenrir/web-panopticon#development) for additional information.";
@@ -35,9 +35,9 @@ jobs:
               await github.rest.issues.createComment(payload);
               core.setFailed(title);
 
-            } else if (pr.data.body.indexOf(gh_title[0]) == -1) {
+            } else if (pull.data.body.indexOf(gh_title[0]) == -1) {
               // Add Github issue to body if not found.
-              payload["body"] = pr.data.body + "\n\nFixes #" + gh_title[0] + ")";
+              payload["body"] = pull.data.body + "\n\nFixes #" + gh_title[0] + ")";
               await github.rest.pulls.update(payload);
 
             }
