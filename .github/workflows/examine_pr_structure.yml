@@ -37,7 +37,7 @@ jobs:
 
             } else if (pull.data.body.indexOf(gh_title[0]) == -1) {
               // Add Github issue to body if not found.
-              payload["body"] = pull.data.body + "\n\nFixes #" + gh_title[0] + ")";
+              payload["body"] = pull.data.body + "\n\nFixes " + gh_title[0];
               await github.rest.pulls.update(payload);
 
             }
