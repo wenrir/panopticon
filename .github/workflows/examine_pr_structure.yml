@@ -10,6 +10,10 @@ jobs:
     name: Examine
     runs-on: ubuntu-latest
     steps:
+      - uses: seferov/pr-lint-action@master
+        with:
+         title-regex: '^\[#-\d*\](\ )'
+         error-message: 'Add Github issue ticket to your title'
       - name: Add labels
         uses: actions/labeler@v4.3.0
         with:
