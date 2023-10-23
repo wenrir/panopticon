@@ -1,11 +1,11 @@
-# web-panopticon
+# Panopticon
 
 ![GitHub contributors](https://img.shields.io/github/contributors-anon/wenrir/web-panopticon)
 ![GitHub issues](https://img.shields.io/github/issues/wenrir/web-panopticon)
 ![GitHub language count](https://img.shields.io/github/languages/count/wenrir/web-panopticon)
 ![GitHub](https://img.shields.io/github/license/wenrir/web-panopticon)
 
-Basic application structure.
+A basic (web) application structure where modules are intended to be separated from each other.
 
 ## Development 
 
