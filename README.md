@@ -5,7 +5,9 @@
 ![GitHub language count](https://img.shields.io/github/languages/count/wenrir/web-panopticon)
 ![GitHub](https://img.shields.io/github/license/wenrir/web-panopticon)
 
-A basic (web) application structure where modules are intended to be separated from each other.
+Basic application structure where modules are intended to be separated from each other.
+
+Implemented as a web app but structure could be reused for anything, `v0.1.0` contains a "clean" template.
 
 ## Development 
 
