@@ -64,6 +64,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_USER_PASSWORD:-sample}
 
   cloak:
+    <<: *cloak-env
     extends:
       <<: *cloak-extends
       service: keycloak
@@ -71,6 +72,7 @@ services:
       - cloak-db
 
   cloak-db:
+    <<: *cloak-env
     extends:
       <<: *cloak-extends
       service: db
