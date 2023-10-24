@@ -28,6 +28,11 @@ x-module-environment: &module_environment
   POSTGRES_USER: ${POSTGRES_USER:-user}
   PERSISTENCE_MODULE: eventsourcing.postgres
 
+x-cloak-env: &cloak-env
+  env_file: ./modules/keycloak/.env
+x-cloak-extends: &cloak-extends
+  file: ./modules/keycloak/cloak.yml
+
 services:
   module:
     profiles: ["module_builder"]
@@ -58,6 +63,22 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-sample}
       POSTGRES_PASSWORD: ${POSTGRES_USER_PASSWORD:-sample}
 
+  cloak:
+    <<: *cloak-env
+    extends:
+      <<: *cloak-extends
+      service: keycloak
+    depends_on:
+      - cloak-db
+
+  cloak-db:
+    <<: *cloak-env
+    extends:
+      <<: *cloak-extends
+      service: db
+    volumes:
+      - cloak-data:/var/lib/postgresql/data
+
   web:
     image: "nginx:alpine"
     restart: always
@@ -79,3 +100,7 @@ services:
         max-file: 2
     volumes:
       - ./nginx/dev/conf.d:/etc/nginx/conf.d
+
+
+volumes:
+  cloak-data:

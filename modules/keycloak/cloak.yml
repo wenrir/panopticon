@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:alpine3.18
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_DB: ${KC_DB_DATABASE:-keycloak_db}
+      POSTGRES_USER: ${KC_DB_USER:-keycloak}
+      POSTGRES_PASSWORD: ${KC_DB_PASSWORD:-password}
+      POSTGRES_ROOT_PASSWORD: ${PG_ROOT_PASSWORD:-admin}
+
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0
+    container_name: keycloak
+    ports:
+      - 8082:8080
+    environment:
+      DB_VENDOR: ${KC_DB_VENDOR:-POSTGRES}
+      DB_ADDR: db
+      KC_DB_DATABASE: ${KC_DB_DATABASE:-keycloak_db}
+      KC_DB_USER: ${KC_DB_USER:-keycloak}
+      KC_DB_PASSWORD: ${KC_DB_PASSOWRD:-password}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+    command:
+      - start-dev # development mode not for prod...
