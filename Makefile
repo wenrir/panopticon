@@ -2,10 +2,16 @@ PROJECT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 SHELL := /bin/sh
 .DEFAULT_GOAL := help
 
+.PHONY: create_ssl
+## Creates ssl certificates (by calling util script misc/ssl_create.sh)
+setup_ssl:
+	@source misc/ssl_create.sh
+
 .PHONY: setup
 ## Setup development enviroment.
 setup:
 	@git config --local core.hookPath .githooks
+	$(MAKE) setup_ssl
 	$(MAKE) build
 
 .PHONY: start
