@@ -1,0 +1,23 @@
+version: "3"
+services:
+  web:
+    image: "nginx:alpine3.18-slim"
+    restart: always
+    container_name: web
+    command: ["nginx", "-g", "daemon off;"]
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+    logging:
+      driver: "local"
+      options:
+        max-size: 5m
+        max-file: 2
+    volumes:
+      - ./dev/conf.d:/etc/nginx/conf.d
