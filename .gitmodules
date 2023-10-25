@@ -1,3 +1,6 @@
 [submodule "docs"]
 	path = docs
 	url = git@github.com:wenrir/web-docs.git
+[submodule "modules/frontend"]
+	path = modules/frontend
+	url = git@github.com:wenrir/open-persona.git
