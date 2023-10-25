@@ -80,26 +80,9 @@ services:
       - cloak-data:/var/lib/postgresql/data
 
   web:
-    image: "nginx:alpine"
-    restart: always
-    container_name: web
-    command: ["nginx", "-g", "daemon off;"]
-    ports:
-      - target: 80
-        published: 80
-        protocol: tcp
-        mode: host
-      - target: 443
-        published: 443
-        protocol: tcp
-        mode: host
-    logging:
-      driver: "local"
-      options:
-        max-size: 5m
-        max-file: 2
-    volumes:
-      - ./nginx/dev/conf.d:/etc/nginx/conf.d
+    extends:
+      file: ./modules/nginx/nginx.yml
+      service: web
 
 
 volumes:
