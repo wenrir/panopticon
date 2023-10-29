@@ -30,8 +30,10 @@ x-module-environment: &module_environment
 
 x-cloak-env: &cloak-env
   env_file: ./modules/keycloak/.env
+
 x-cloak-extends: &cloak-extends
   file: ./modules/keycloak/cloak.yml
+
 
 services:
   module:
@@ -83,6 +85,13 @@ services:
     extends:
       file: ./modules/nginx/nginx.yml
       service: web
+
+  ui:
+    extends:
+      file: ./modules/frontend/ui.yml
+      service: ui
+    container_name: ui
+    command: dev
 
 
 volumes:
