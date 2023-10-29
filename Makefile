@@ -1,6 +1,8 @@
 PROJECT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 SHELL := /bin/sh
 .DEFAULT_GOAL := help
+args=$(filter-out $@,$(MAKECMDGOALS))
+compose := docker compose --file $(PROJECT_DIR)/docker-compose.yml
 
 .PHONY: setup
 ## Setup development enviroment.
@@ -10,23 +12,29 @@ setup:
 
 .PHONY: start
 ## Start docker services
+## Run specific command inside modules, example usage `make start ui`
 start:
-	@docker compose --file $(PROJECT_DIR)/docker-compose.yml up --detach
+	@$(compose) up $(args) --detach
 
 .PHONY: stop
 ## Stop docker services
 stop:
 	@docker compose down --rmi all --volumes --remove-orphans
 
+.PHONY: cmd
+## Run specific command inside modules, example usage `make cmd ui sh`
+cmd:
+	@$(compose) run --rm $(args)
+
 .PHONY: build
 ## Build all docker images
 dbuild:
-	@docker compose --file $(PROJECT_DIR)/docker-compose.yml build
+	@$(compose) build
 
 .PHONY: clean
 ## Clean images
 dclean:
-	@docker compose --file $(PROJECT_DIR)/docker-compose.yml images -q | xargs -r docker rmi
+	@$(compose) images -q | xargs -r docker rmi
 
 .PHONY: g-update
 ## Pull origin master and update submodules
@@ -53,7 +61,7 @@ test: test_sample
 .PHONY: build_sample
 ## Builds sample module
 build_sample:
-	@MODULE_NAME=sample docker compose --file $(PROJECT_DIR)/docker-compose.yml build module
+	@MODULE_NAME=sample $(compose) build module
 
 .PHONY: build
 ## Builds all modules
