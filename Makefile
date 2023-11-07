@@ -3,6 +3,7 @@ SHELL := /bin/sh
 .DEFAULT_GOAL := help
 args=$(filter-out $@,$(MAKECMDGOALS))
 compose := docker compose --file $(PROJECT_DIR)/docker-compose.yml
+SBLINT-exists: ; @which sblint > /dev/null 2>&1
 
 .PHONY: setup
 ## Setup development enviroment.
@@ -25,6 +26,12 @@ stop:
 ## Run specific command inside modules, example usage `make cmd ui sh`
 cmd:
 	@$(compose) run --rm $(args)
+
+.PHONY: sblint
+## Run cl linter
+sblint: SBLINT-exists
+	@sblint | reviewdog -efm="%f:%l:%c: %m" -diff="git diff main"
+
 
 .PHONY: build
 ## Build all docker images

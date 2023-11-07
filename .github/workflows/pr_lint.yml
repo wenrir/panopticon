@@ -1,0 +1,29 @@
+name: Test PR
+
+on:
+  pull_request:
+    types: [opened, synchronized, reopened, edited]
+    branches:
+      - main
+jobs:
+  test:
+    name: ${{ matrix.lisp }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        lisp: [sbcl-bin]
+        os: [ubuntu-latest, macOS-latest]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Roswell
+        env:
+          LISP: ${{ matrix.lisp }}
+        run: |
+          curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
+      - name: Install sbcl
+        run: ros install sbcl
+      - name: Install cxxxr/sblint
+        run: ros install cxxxr/sblint
+      - uses: reviewdog/action-setup@v1
+        run: |
+          sblint | reviewdog -efm="%f:%l:%c: %m" -reporter=github-pr-review -diff="git diff ${{ github.event.pull_request.base.ref }}"
