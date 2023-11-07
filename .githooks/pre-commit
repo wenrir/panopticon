@@ -18,3 +18,15 @@ if [ "$exit_status" -ne 0 ]; then
   echo "Make test or check did not pass please resolve issues and try again."
   exit 1
 fi
+
+if [ -z "$(which sblint)" ]; then
+    echo "WARNING! sblint not found. Given up to run it."
+    exit 0
+fi
+
+error_count=$(sblint | wc -l | tr -d '[[:space:]]')
+
+if [ "$error_count" -gt "0" ]; then
+    echo "Failed to commit because $error_count errors are found by SBLint."
+    exit 1
+fi
