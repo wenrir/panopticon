@@ -20,9 +20,9 @@ jobs:
           LISP: ${{ matrix.lisp }}
         run: |
           curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
-      - name: Install Rove
+      - name: Install sbcl
         run: ros install sbcl
-      - name: Install Rove
+      - name: Install cxxxr/sblint
         run: ros install cxxxr/sblint
       - uses: reviewdog/action-setup@v1
         run: |
