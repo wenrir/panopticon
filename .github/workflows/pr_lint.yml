@@ -14,7 +14,7 @@ jobs:
         lisp: [sbcl-bin]
         os: [ubuntu-latest, macOS-latest]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
       - name: Install Roswell
         env:
           LISP: ${{ matrix.lisp }}
@@ -23,7 +23,9 @@ jobs:
       - name: Install sbcl
         run: ros install sbcl
       - name: Install cxxxr/sblint
-        run: ros install cxxxr/sblint
+        run: |
+          ros install cxxxr/sblint
       - uses: reviewdog/action-setup@v1
+      - name: Run reviewdog
         run: |
           sblint | reviewdog -efm="%f:%l:%c: %m" -reporter=github-pr-review -diff="git diff ${{ github.event.pull_request.base.ref }}"
