@@ -15,6 +15,21 @@ jobs:
         os: [ubuntu-latest, macOS-latest]
     steps:
       - uses: actions/checkout@v4
+      - name: Cache roswell
+        id: cache-roswell
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-roswell-modules
+        with:
+          path: ~/.roswell
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - if: ${{ steps.cache-roswell.outputs.cache-hit != 'true' }}
+        name: List the state of roswell
+        continue-on-error: true
+        run: ros list installed
       - name: Install Roswell
         env:
           LISP: ${{ matrix.lisp }}
