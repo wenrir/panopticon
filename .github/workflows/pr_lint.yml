@@ -5,6 +5,9 @@ on:
     types: [opened, synchronized, reopened, edited]
     branches:
       - main
+concurrency:
+  group: PR-lint-${{ github.event.pull_request.number || github.ref }}
+  
 jobs:
   test:
     name: ${{ matrix.lisp }} on ${{ matrix.os }}
