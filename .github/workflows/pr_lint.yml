@@ -2,7 +2,7 @@ name: Test PR
 
 on:
   pull_request:
-    types: [opened, synchronized, reopened, edited]
+    types: [opened, synchronize, reopened, edited]
     branches:
       - main
 jobs:
@@ -14,7 +14,22 @@ jobs:
         lisp: [sbcl-bin]
         os: [ubuntu-latest, macOS-latest]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
+      - name: Cache roswell
+        id: cache-roswell
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-roswell-modules
+        with:
+          path: ~/.roswell
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - if: ${{ steps.cache-roswell.outputs.cache-hit != 'true' }}
+        name: List the state of roswell
+        continue-on-error: true
+        run: ros list installed
       - name: Install Roswell
         env:
           LISP: ${{ matrix.lisp }}
@@ -22,8 +37,10 @@ jobs:
           curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
       - name: Install sbcl
         run: ros install sbcl
-      - name: Install cxxxr/sblint
-        run: ros install cxxxr/sblint
       - uses: reviewdog/action-setup@v1
+      - name: Install and run cxxxr/sblint
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          sblint | reviewdog -efm="%f:%l:%c: %m" -reporter=github-pr-review -diff="git diff ${{ github.event.pull_request.base.ref }}"
+          ros install cxxxr/sblint
+          ~/.roswell/bin/sblint | reviewdog -efm="%f:%l:%c: %m" -reporter=github-pr-review -diff="git diff ${{ github.event.pull_request.base.ref }}"
