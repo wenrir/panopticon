@@ -2,7 +2,7 @@ name: Examine structure of PR.
 
 on:
   pull_request:
-    types: [opened, synchronized, reopened, edited]
+    types: [opened, synchronize, reopened, edited]
     branches:
       - main
 
