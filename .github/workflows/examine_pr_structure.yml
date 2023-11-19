@@ -2,9 +2,14 @@ name: Examine structure of PR.
 
 on:
   pull_request:
-    types: [opened, synchronized, reopened, edited]
+    types: [opened, synchronize, reopened, edited]
     branches:
       - main
+
+concurrency:
+  group: PR-structure-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   examine:
     name: Examine
